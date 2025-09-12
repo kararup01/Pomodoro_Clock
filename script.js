@@ -47,10 +47,9 @@ const countDown = (time) =>{
 }
 
 const startTimer = (startTimer) =>{
-  if (timerId != null){
-    stopTimer();
+  if (!paused){
+    return setInterval(countDown(startTimer), 1000);
   }
-  return setInterval(countDown(startTimer), 1000);
 }
 const stopTimer = () =>{
   clearInterval(timerId);
@@ -63,27 +62,32 @@ const getTimeInSeconds = (timeString) => {
 }
 
 startBtn.addEventListener('click', ()=>{
-  timerId = startTimer(WORK_TIME);
-  updateTitle("It's work time!")
+  if(timerId == null){
+    timerId = startTimer(WORK_TIME);
+    updateTitle("It's work time!")
+  }
 })
 
 pauseBtn.addEventListener('click', ()=>{
-  stopTimer();
-  paused = true;
-  updateTitle("Timer Paused");
+  if(timerId != null){
+    stopTimer();
+    paused = true;
+    updateTitle("Timer Paused");
+  }
 })
 
 resumeBtn.addEventListener('click', ()=>{
   if(paused){
+    paused = false;
     const currentTime = getTimeInSeconds(timer.innerText);
     timerId = startTimer(currentTime);
-    paused = false;
     (!oneRoundComplete) ? updateTitle("It's work time!") : updateTitle("It's break time");
   }
 })
 
 resetBtn.addEventListener('click', ()=>{
   stopTimer();
+  paused = false;
   timer.innerText = "55 : 00";
   updateTitle("Click start to start timer");
 })
